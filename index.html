@@ -2,12 +2,53 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <meta name="description" content="A Pomodoro focus timer with tasks, history and a streak calendar. Works offline." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16181d" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Pomodoro Focus</title>
   </head>
   <body>
-    <div id="app"></div>
+    <a class="skip-link" href="#main">Skip to timer</a>
+    <header class="site-header">
+      <h1>Pomodoro Focus</h1>
+      <nav aria-label="App">
+        <button type="button" id="open-help" aria-keyshortcuts="?">Shortcuts</button>
+        <button type="button" id="open-settings">Settings</button>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="card timer-card" aria-label="Timer">
+        <pf-timer></pf-timer>
+      </section>
+      <section class="card" aria-label="Tasks">
+        <pf-tasks></pf-tasks>
+      </section>
+      <section class="card history-card" aria-label="History">
+        <pf-history></pf-history>
+      </section>
+    </main>
+
+    <footer class="site-footer muted">
+      <p>Everything stays in this browser (localStorage). <span id="offline-status"></span></p>
+    </footer>
+
+    <!-- Polite live region: minute marks and phase changes only, never every second. -->
+    <div id="announcer" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <pf-settings></pf-settings>
+
+    <dialog id="help" aria-labelledby="help-title">
+      <h2 id="help-title">Keyboard shortcuts</h2>
+      <dl id="shortcut-list"></dl>
+      <form method="dialog"><button>Close</button></form>
+    </dialog>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
