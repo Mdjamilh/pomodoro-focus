@@ -14,6 +14,7 @@ import { documentTitle } from './lib/format'
 import { SHORTCUTS, shortcutFor } from './lib/shortcuts'
 import { playChime, unlockAudio } from './lib/sound'
 import { completionMessage, showNotification } from './lib/notify'
+import { registerServiceWorker } from './lib/pwa'
 
 const store = defaultStore()
 let settings = loadSettings(store)
@@ -120,3 +121,4 @@ document.addEventListener('visibilitychange', () => {
 })
 
 timer.sync()
+registerServiceWorker(document.querySelector('#offline-status'))
