@@ -71,3 +71,26 @@ describe('TaskStore', () => {
     expect(tasks.activeId).toBeNull()
   })
 })
+
+describe('TaskStore across tabs', () => {
+  it('keeps tasks added in another tab', () => {
+    const store = memoryStore()
+    const tabA = new TaskStore(store)
+    const tabB = new TaskStore(store)
+    tabA.add('From A')
+    tabB.add('From B')
+    expect(new TaskStore(store).tasks.map((t) => t.title)).toEqual(['From A', 'From B'])
+  })
+
+  it('reload picks up changes and notifies', () => {
+    const store = memoryStore()
+    const tabA = new TaskStore(store)
+    const tabB = new TaskStore(store)
+    const onChange = vi.fn()
+    tabB.addEventListener('change', onChange)
+    tabA.add('New')
+    tabB.reload()
+    expect(tabB.tasks).toHaveLength(1)
+    expect(onChange).toHaveBeenCalled()
+  })
+})

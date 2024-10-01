@@ -151,6 +151,16 @@ export class TimerController extends EventTarget {
     this.#schedule()
   }
 
+  /**
+   * Adopts the state another tab saved. The timer only exists as timestamps,
+   * so both tabs then show the same countdown without talking to each other.
+   */
+  reload(): void {
+    if (!this.#store) return
+    this.#state = readJSON(this.#store, STATE_KEY, this.#state, validState)
+    this.sync()
+  }
+
   dispose(): void {
     clearTimeout(this.#timeout)
     this.#doc?.removeEventListener('visibilitychange', this.#onVisibility)

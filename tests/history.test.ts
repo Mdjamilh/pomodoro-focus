@@ -166,3 +166,22 @@ describe('HistoryStore', () => {
     expect(new HistoryStore(store).records).toHaveLength(1)
   })
 })
+
+describe('two tabs sharing storage', () => {
+  it('does not lose sessions written by the other tab', () => {
+    const store = memoryStore()
+    const tabA = new HistoryStore(store)
+    const tabB = new HistoryStore(store)
+    tabA.add({ taskId: null, taskTitle: null, startedAt: 1, endedAt: 2, durationMs: 1 })
+    tabB.add({ taskId: null, taskTitle: null, startedAt: 3, endedAt: 4, durationMs: 1 })
+    expect(new HistoryStore(store).records.map((r) => r.endedAt)).toEqual([2, 4])
+  })
+
+  it('records a completion seen by both tabs once', () => {
+    const store = memoryStore()
+    const entry = { taskId: null, taskTitle: null, startedAt: 1, endedAt: 2, durationMs: 1 }
+    new HistoryStore(store).add(entry)
+    new HistoryStore(store).add(entry)
+    expect(new HistoryStore(store).records).toHaveLength(1)
+  })
+})

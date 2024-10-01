@@ -150,4 +150,17 @@ describe('TimerController with fake timers', () => {
     expect(timer.snapshot()).toMatchObject({ phase: 'shortBreak', status: 'idle', remainingMs: 5 * MIN })
     expect(vi.getTimerCount()).toBe(0)
   })
+
+  it('a second tab adopts the running timer from storage', () => {
+    const tabA = setup()
+    const tabB = new TimerController(DEFAULT_CONFIG, { store: tabA.store })
+    tabA.timer.start()
+    vi.advanceTimersByTime(2 * MIN)
+    tabB.reload()
+    expect(tabB.snapshot()).toMatchObject({ status: 'running', remainingMs: 23 * MIN })
+    tabA.timer.pause()
+    tabB.reload()
+    expect(tabB.snapshot().status).toBe('paused')
+    tabB.dispose()
+  })
 })

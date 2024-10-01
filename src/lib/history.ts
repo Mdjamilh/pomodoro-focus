@@ -206,7 +206,16 @@ export class HistoryStore extends EventTarget {
     return this.#records
   }
 
+  /** Re-reads storage, e.g. after another tab wrote to it. */
+  reload(): void {
+    this.#records = readJSON(this.#store, KEY, [], validList)
+    this.dispatchEvent(new Event('change'))
+  }
+
   add(entry: Omit<SessionRecord, 'id'>): SessionRecord {
+    // Read-modify-write against storage, not the in-memory copy: with two tabs
+    // open, each would otherwise overwrite the other's sessions.
+    this.#records = readJSON(this.#store, KEY, [], validList)
     const record = { ...entry, id: newId() }
     // The same completion can arrive twice (two tabs, or a replay after reload).
     const duplicate = this.#records.find((r) => r.endedAt === record.endedAt && r.startedAt === record.startedAt)

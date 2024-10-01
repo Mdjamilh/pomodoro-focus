@@ -49,6 +49,12 @@ export class TaskStore extends EventTarget {
     this.#data = readJSON(store, KEY, { tasks: [], activeId: null }, validData)
   }
 
+  /** Re-reads storage, e.g. after another tab wrote to it. */
+  reload(): void {
+    this.#data = readJSON(this.#store, KEY, { tasks: [], activeId: null }, validData)
+    this.dispatchEvent(new Event('change'))
+  }
+
   get tasks(): readonly Task[] {
     return this.#data.tasks
   }
@@ -64,6 +70,7 @@ export class TaskStore extends EventTarget {
   add(title: string, estimate: number | null = null): Task | null {
     const clean = title.trim().replace(/\s+/g, ' ').slice(0, MAX_TITLE)
     if (!clean) return null
+    this.#data = readJSON(this.#store, KEY, this.#data, validData)
     const task: Task = { id: newId(), title: clean, done: false, createdAt: this.#now(), estimate }
     const tasks = [...this.#data.tasks, task]
     // The first task you add becomes the one you are working on.

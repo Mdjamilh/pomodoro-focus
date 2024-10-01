@@ -113,6 +113,19 @@ settingsEl.addEventListener('settings-change', (e) => {
   timer.setConfig(settings)
 })
 
+// Another tab changed something. localStorage fires `storage` only in the
+// other tabs, which is exactly where we need to pick the change up.
+window.addEventListener('storage', (e) => {
+  if (e.key === null || e.key.endsWith(':timer')) timer.reload()
+  if (e.key === null || e.key.endsWith(':tasks')) tasks.reload()
+  if (e.key === null || e.key.endsWith(':history')) history.reload()
+  if (e.key === null || e.key.endsWith(':settings')) {
+    settings = loadSettings(store)
+    applyTheme(settings.theme)
+    timer.setConfig(settings)
+  }
+})
+
 // Coming back from bfcache or regaining focus: recompute from the clock.
 window.addEventListener('pageshow', () => timer.sync())
 window.addEventListener('focus', () => timer.sync())
