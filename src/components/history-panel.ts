@@ -30,6 +30,11 @@ const styles = `
   th, td { text-align: left; padding: 0.3rem 0; border-bottom: 1px solid var(--border); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .actions { margin-top: 1rem; text-align: right; }
+  .charts { display: grid; gap: 0 2rem; }
+  .charts > section { min-width: 0; }
+  @media (min-width: 60rem) {
+    .charts { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+  }
   .actions button { font-size: 0.85rem; padding: 0.3rem 0.8rem; }
 `
 
@@ -105,13 +110,19 @@ export class HistoryPanel extends HTMLElement {
         <div class="stat" data-stat="streak"><dt>Current streak</dt><dd>${days(current)}</dd></div>
         <div class="stat" data-stat="longest"><dt>Longest streak</dt><dd>${days(longest)}</dd></div>
       </dl>
+      <div class="charts">
+      <section>
       <h3 id="week-heading">Pomodoros per day</h3>
       <figure class="week" role="img" aria-labelledby="week-heading" aria-describedby="week-desc" style="margin:0">
         ${weekChart(week)}
         <figcaption id="week-desc" class="visually-hidden">${week.map((d) => `${d.date}: ${d.count}`).join(', ')}</figcaption>
       </figure>
+      </section>
+      <section>
       <h3>Streak calendar</h3>
       <pf-heatmap></pf-heatmap>
+      </section>
+      </div>
       <h3>By task, last 7 days</h3>
       ${
         tasks.length
